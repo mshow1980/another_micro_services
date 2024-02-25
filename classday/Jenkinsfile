@@ -1,73 +1,23 @@
 pipeline{
     
-    agent any 
-    
-    stages {
-        
-        stage('Git Checkout'){
-            
+    agent any
+
+    stages{
+        stage('Clean Workspace'){
+
             steps{
-                
                 script{
-                    
-                    git branch: 'main', url: 'https://github.com/vikash-kumar01/mrdevops_javaapplication.git'
+                    cleanWs()
                 }
             }
         }
-        stage('UNIT testing'){
-            
+        stage('checkout workspace'){
             steps{
-                
                 script{
-                    
-                    sh 'mvn test'
+                    git 'https://github.com/mshow1980/scion_scope-javaapp-ci-cd.git'
                 }
             }
         }
-        stage('Integration testing'){
-            
-            steps{
-                
-                script{
-                    
-                    sh 'mvn verify -DskipUnitTests'
-                }
-            }
-        }
-        stage('Maven build'){
-            
-            steps{
-                
-                script{
-                    
-                    sh 'mvn clean install'
-                }
-            }
-        }
-        stage('Static code analysis'){
-            
-            steps{
-                
-                script{
-                    
-                    withSonarQubeEnv(credentialsId: 'sonar-api') {
-                        
-                        sh 'mvn clean package sonar:sonar'
-                    }
-                   }
-                    
-                }
-            }
-            stage('Quality Gate Status'){
-                
-                steps{
-                    
-                    script{
-                        
-                        waitForQualityGate abortPipeline: false, credentialsId: 'sonar-api'
-                    }
-                }
-            }
-        }
-        
+    }
+
 }
